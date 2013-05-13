@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" creationComplete="init()">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:Stroke id = "s1" color="blue" weight="2"/> 
+	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.charts.series.LineSeries;
+			[Bindable]
+			public var coll:ArrayCollection = new ArrayCollection([
+				{Date:"2011-12-1",Value:2},
+				{Date:"2011-12-2",Value:4},
+				{Date:"2011-12-3",Value:5},
+				{Date:"2011-12-4",Value:9},
+				{Date:"2011-12-5",Value:6}
+			]);
+			
+			protected function init():void{
+				var array:Array = new Array();   
+				
+				var lineSeries1:LineSeries=new LineSeries();  //设置图表的系列
+				lineSeries1.xField="Date"
+				lineSeries1.yField = "Value";
+				lineSeries1.displayName="时间趋势图";
+				lineSeries1.setStyle("form", "curve");  
+				lineSeries1.setStyle("lineStroke",s1);
+				array.push( lineSeries1 );
+				myChart.series = array//给图表系列赋值
+			}
+		]]>
+	</fx:Script>
+	<mx:Legend dataProvider="{myChart}" height="20"/>
+	<mx:LineChart id="myChart"  dataProvider="{coll}"  width="400" height="360" showDataTips="true">
+		<mx:verticalAxis>
+			<mx:LinearAxis id="laxis" autoAdjust="true" baseAtZero="false"  />
+		</mx:verticalAxis>
+		<mx:horizontalAxis>
+			<mx:CategoryAxis id="ca"
+							 dataProvider="{coll}"
+							 categoryField="Date"
+							 />
+			
+		</mx:horizontalAxis>
+		<mx:horizontalAxisRenderers>
+			<mx:AxisRenderer axis="{ca}"
+							 canDropLabels="true" />
+		</mx:horizontalAxisRenderers>
+		<mx:series>
+		</mx:series>
+	</mx:LineChart>
+</s:Application>

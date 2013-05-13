@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"   
+			   xmlns:s="library://ns.adobe.com/flex/spark"   
+			   xmlns:mx="library://ns.adobe.com/flex/mx"   
+			   color="#000000" width="670" height="420"  
+			   backgroundColor="#ffffff"  
+			   creationComplete="init()"  
+			   >  
+	
+	<fx:Declarations>  
+		<!-- Place non-visual elements (e.g., services, value objects) here -->  
+		<mx:HTTPService id="test" resultFormat="text" url="../getmemory.do" result="test_resultHandler(event)" fault="test_faultHandler(event)"/>
+		
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+		<mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+		<mx:SolidColor id="sc2" color="red" alpha=".3"/>
+		<mx:SolidColor id="sc3" color="green" alpha=".3"/>
+		
+		<mx:SolidColor id="sc4" color="yellow" alpha=".3"/>
+		<mx:SolidColor id="sc5" color="gray" alpha=".3"/>
+		<!--边框样式-->
+		<mx:SolidColorStroke id = "s1" color="blue" weight="2" alpha=".4" />
+		<mx:SolidColorStroke id = "s2" color="red" weight="2" alpha=".4" />
+		<mx:SolidColorStroke id = "s3" color="green" weight="2" alpha=".4" />
+		
+	</fx:Declarations>  
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSONDecoder;
+			
+			import mx.charts.chartClasses.AxisLabelSet;
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.formatters.DateFormatter;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]  
+			public var testDatas:ArrayCollection = new ArrayCollection();;
+			
+			
+			[Bindable]
+			private var maxDate:Date;
+			[Bindable]
+			private var minDate:Date;
+			
+			private var jsonObject:JSONDecoder;
+			private var timer:Timer;
+			private var dateFormat:DateFormatter = new DateFormatter();
+			private var dateVar:Date;
+			
+			private function init():void {
+				dateFormat.formatString = "HH:NN:SS";   
+				minDate = new Date();
+				var dx:Date = new Date();
+				dx.setMinutes(dx.getMinutes()+1, dx.getSeconds(), dx.getMilliseconds());
+				maxDate = dx;
+				<!--监控启动初始值-->
+					dateVar = new Date();
+				testDatas = new ArrayCollection([{time: dateVar, current: 0} ]);
+				<!--设置出发器，每秒更新一次-->
+					timer = new Timer(1000);
+				timer.addEventListener(TimerEvent.TIMER, getDatas)
+				timer.start();
+				
+			}
+			
+			private function mylabel(labelValue:Object, previousValue:Object, d:IAxis):String {
+				var str:String = dateFormat.format(labelValue);
+				return str;
+			}
+			
+			private function getDatas(et:Event):void {
+//				var valueTestValue:int = Math.random()*100;
+				var dm:Date = new Date();
+				dm.setTime(dateVar.getTime());
+				dm.setSeconds(dm.getSeconds()+1, dm.getMilliseconds());
+				dateVar = dm;
+				
+				if (dateVar.getTime()>maxDate.getTime()) {
+					maxDate = dateVar;
+					var dx:Date = new Date();
+					dx.setMinutes(dx.getMinutes()-1, dx.getSeconds(), dx.getMilliseconds());
+					minDate = dx;
+				}
+				<!--获取折线图数据来源-->
+//					testDatas.addItem({time: dateVar, current: valueTestValue});   
+					var url:URLVariables = new URLVariables();
+					test.send(url);
+					
+				
+			}
+			
+			protected function test_resultHandler(event:ResultEvent):void
+			{
+				var rawData:String = String(event.result);
+				
+				Alert.show(rawData);
+				
+				jsonObject = new JSONDecoder(rawData);
+				
+				testDatas.addItem(jsonObject.getValue());
+//				
+//				Alert.show("数据");
+				
+//				var o:Object = new Object();
+//				o.current = flash.system.System.totalMemory;
+//				testDatas.addItem({"current":o.current,"time":dateVar});
+				
+				
+				
+			}
+			
+			protected function test_faultHandler(event:FaultEvent):void
+			{
+				Alert.show("failed","提示");
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:Panel title="主机一系统内存使用记录" height="175" width="100%" paddingTop="0" layout="horizontal" horizontalAlign="center" y="10" x="0">
+		<mx:LineChart id="mychart" height="100%" width="100%"  
+					  showDataTips="true" seriesFilters="[]">
+			<mx:horizontalAxis>
+				<mx:DateTimeAxis dataUnits="seconds" interval="5" minimum="{minDate}" maximum="{maxDate}" labelFunction="mylabel" />  
+			</mx:horizontalAxis>
+			
+			<mx:verticalAxis>
+				<mx:LinearAxis baseAtZero="true" />
+			</mx:verticalAxis>
+			
+			<mx:series>
+				<mx:LineSeries yField="current" xField="time" displayName="TestData" dataProvider="{this.testDatas}" >
+					<mx:lineStroke>
+						<mx:Stroke color="#0000FF" weight="1" />
+					</mx:lineStroke>
+				</mx:LineSeries>
+			</mx:series>
+		</mx:LineChart>
+	</mx:Panel>
+</s:Application> 

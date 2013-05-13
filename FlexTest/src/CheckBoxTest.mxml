@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   creationComplete="init()"
+			   >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
+			
+			import spark.effects.Move;
+			
+			[Bindable] 
+			private var carArray:ArrayCollection = new ArrayCollection(); 
+			
+			private function doClose():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function init():void{
+				
+				var car : Object = new Object(); 
+				car.name = "Ford"; 
+				car.available = true; 
+				carArray.addItem(car); 
+				
+				car = new Object(); 
+				car.name = "Benz"; 
+				car.available = true; 
+				carArray.addItem(car); 
+				
+				car = new Object(); 
+				car.name = "BMW"; 
+				car.available = false; 
+				carArray.addItem(car);
+				
+				car = new Object(); 
+				car.name = "BUCIK"; 
+				car.available = false; 
+				carArray.addItem(car);
+				
+				car = new Object(); 
+				car.name = "TOYOTO"; 
+				car.available = false; 
+				carArray.addItem(car);
+				
+				car = new Object(); 
+				car.name = "CEHO"; 
+				car.available = false; 
+				carArray.addItem(car);
+				
+				car = new Object(); 
+				car.name = "KAKA"; 
+				car.available = false; 
+				carArray.addItem(car);
+				
+				car = new Object(); 
+				car.name = "MESSI"; 
+				car.available = false; 
+				carArray.addItem(car);
+			}
+			
+			//移动到区块
+			protected function moveToHandler(event:MouseEvent):void
+			{
+				// 判断选择数量是否大于0
+				var issel:Boolean = isSelected(carArray);
+				if(issel){
+					
+				}else{
+					Alert.show("至少选择一条记录","提示");
+				}
+			}
+			
+			// 判断选择数量是否大于0
+			private function isSelected(carArray:ArrayCollection):Boolean{
+				for each(var ob:Object in carArray){
+					if(ob.available == true){
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			//划分给区块
+			protected function divideHandler(event:MouseEvent):void
+			{
+				// 判断选择数量是否大于0
+				
+//				var drvideToPlanRegion:DrvideToPlanRegion = new DrvideToPlanRegion();
+//				drvideToPlanRegion.height = 210;
+//				drvideToPlanRegion.width = 356;
+//				
+//				var point1:Point = new Point();
+//				point1.x=0;
+//				point1.y=0;               
+//				point1=drvideToPlanRegion.localToGlobal(point1);
+//				drvideToPlanRegion.x=(this.width - drvideToPlanRegion.width)/2;
+//				drvideToPlanRegion.y=(this.height - drvideToPlanRegion.height)/2;
+//				
+//				drvideToPlanRegion.title = "选择下属区块";
+//				
+//				PopUpManager.addPopUp(drvideToPlanRegion,this,true);
+//				
+			}
+			
+			private function LabFunc(item:Object, column:DataGridColumn):String
+			{
+				return ((carArray.getItemIndex(item)+1).toString());
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:ArrayCollection id="contacts"/>
+	</fx:Declarations>
+	
+	<s:Group width="100%" height="100%" x="4" y="4">
+		<mx:TabNavigator id="tn"  width="415" height="274" color="0x323232" >
+			<!-- Define each panel using a VBox container. -->
+			
+			<s:NavigatorContent label="未归属资源">
+				<s:Label text="资源名称" fontSize="14" x="9" y="14"/>
+				<s:TextInput x="79" y="10" id="textInput"/>
+				<s:Button x="304" y="10" label="移动到区块" click="moveToHandler(event)"/>
+				<mx:DataGrid x="10" y="40" width="394" height="190" dataProvider="{carArray}" editable="true">
+					<mx:columns>
+						<fx:Array>
+							<mx:DataGridColumn headerText="选择" editable="false"  textAlign="center" width="40">
+								<mx:itemRenderer>
+									<fx:Component>
+										<mx:CheckBox label="" selected="{data.available}" click="data.available = !data.available" textAlign="center"/>
+									</fx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="序号" labelFunction="LabFunc" sortable="false" resizable="false" textAlign="center" editable="false" width="40"/>
+							<mx:DataGridColumn headerText="标识" dataField="name" textAlign="center" editable="false"/>
+							<mx:DataGridColumn headerText="资源名称" dataField="available" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="资源类型" dataField="name" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="资源级别" dataField="available" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="归属时间" dataField="name" editable="true" textAlign="center"/>
+						</fx:Array>
+					</mx:columns>
+				</mx:DataGrid>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent label="已归属资源">
+				<s:Label text="资源名称" fontSize="14" x="9" y="14"/>
+				<s:TextInput x="79" y="10"/>
+				<s:Button x="304" y="10" label="划分给区块" click="divideHandler(event)"/>
+				<mx:DataGrid x="10" y="40" width="394" height="190">
+					<mx:columns>
+						<fx:Array>
+							<mx:DataGridColumn headerText="选择" editable="false"  textAlign="center" width="40">
+								<mx:itemRenderer>
+									<fx:Component>
+										<mx:CheckBox label="" selected="{data.available}" click="data.available = !data.available" textAlign="center"/>
+									</fx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="序号" labelFunction="LabFunc" sortable="false" resizable="false" textAlign="center" editable="false" width="40"/>
+							<mx:DataGridColumn headerText="标识" dataField="name" textAlign="center" editable="false"/>
+							<mx:DataGridColumn headerText="资源名称" dataField="available" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="资源类型" dataField="name" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="资源级别" dataField="available" editable="true" textAlign="center"/>
+							<mx:DataGridColumn headerText="归属时间" dataField="name" editable="true" textAlign="center"/>
+						</fx:Array>
+					</mx:columns>
+				</mx:DataGrid>
+			</s:NavigatorContent>
+		</mx:TabNavigator>
+	</s:Group>
+</s:Application> 

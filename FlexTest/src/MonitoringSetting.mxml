@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" creationComplete="init()">
+	<fx:Declarations>
+		
+		<fx:XMLList id="treeData">
+			<node label="Metric tree root" isfolder="true">
+				<node label="Java apps" isfolder="true" id="1">
+					<node label="Memory" isfolder="true" id="1">
+					<node label="堆内存使用情况" isfolder="false" id="1"/>
+					<node label="非堆内存使用情况" isfolder="false" id="1"/>
+					<node label="内存池Eden Space" isfolder="false" id="1"/>
+					<node label="内存池Survivor Space" isfolder="false" id="1"/>
+					<node label="内存池Tenured Gen" isfolder="false" id="1"/>
+					<node label="内存池Perm Gen[shared-ro]" isfolder="false" id="1"/>
+					<node label="内存池Code Cache" isfolder="false" id="1"/>
+					<node label="内存池Perm Gen[shared-rw]" isfolder="false" id="1"/>
+					</node>
+					<node label="Thread" isfolder="true" id="2">
+						<node label="Thread" isfolder="false" id="2"/>
+					</node>
+				</node>
+				<node label="Hosts" isfolder="true" id="3">
+					<node label="windows" isfolder="false" id="3"/>
+					<node label="Linux" isfolder="false" id="3"/>
+				</node>
+			</node>
+		</fx:XMLList>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.ListEvent;
+			
+			public var selectedNode:XML;
+			public var info:MonitoringInfo;
+			
+			public function treeChanged(event:Event):void{
+			
+				selectedNode=Tree(event.target).selectedItem as XML;
+			}
+			
+			public function showInfo(event:ListEvent):void{
+			
+				if(event.itemRenderer.data.@isfolder == true){
+				
+					rightContent.removeAllElements();
+					rightContent.setStyle("backgroundImage","@Embed('images/bg_inventory.gif')");
+					
+				}else if(event.itemRenderer.data.@id == 1){
+				
+					rightContent.setStyle("backgroundAlpha",0);
+					rightContent.removeAllElements();
+					info = new MonitoringInfo();
+					rightContent.addElement(info);
+					info.mychart.series
+				}else if(event.itemRenderer.data.@id == 2){
+				
+					rightContent.setStyle("backgroundAlpha",0);
+					rightContent.removeAllElements();
+					
+				}else if(event.itemRenderer.data.@id == 3){
+				
+					rightContent.setStyle("backgroundAlpha",0);
+					rightContent.removeAllElements();
+				}
+				
+			
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:Panel title="System Monitoring" height="75%" width="75%"     
+			  paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">    
+		<mx:HDividedBox width="100%" height="100%">    
+			<mx:Tree id="myTree" width="50%" height="100%" labelField="@label"    
+					 showRoot="true" dataProvider="{treeData}" change="treeChanged(event)" itemClick="showInfo(event)"/>    
+			<s:BorderContainer width="100%" height="100%" id="rightContent" borderVisible="false" 
+							   backgroundImage="@Embed('images/bg_inventory.gif')" backgroundImageFillMode="repeat">
+			</s:BorderContainer>
+		</mx:HDividedBox>    
+		
+	</mx:Panel>    
+	
+</s:Application>

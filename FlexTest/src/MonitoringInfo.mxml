@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"   
+			   xmlns:s="library://ns.adobe.com/flex/spark"   
+			   xmlns:mx="library://ns.adobe.com/flex/mx"   
+			   color="#000000" width="670" height="420"  
+			   backgroundColor="#ffffff"  
+			   creationComplete="init()"  
+			   >  
+	<fx:Declarations>  
+		<!-- Place non-visual elements (e.g., services, value objects) here -->  
+		
+	</fx:Declarations>  
+	<fx:Script>  
+		<![CDATA[  
+			import com.adobe.serialization.json.*;
+			
+			import flashx.textLayout.formats.Float;
+			
+			import mx.charts.chartClasses.AxisLabelSet;
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.formatters.DateFormatter;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent; 
+			private var alert:Alert;  
+			
+			
+			[Bindable] //绑定元数据，进行同步  
+			public var testDatas:ArrayCollection;  
+			
+			[Bindable]  
+			private var maxDate:Date;  
+			[Bindable]  
+			private var minDate:Date; 
+			[Bindable]
+			private var totalMemory:int;
+			[Bindable]
+			private var useMemory:int;
+			[Bindable]
+			private var valueMemory:String;
+			
+			private var timer:Timer;  
+			private var dateFormat:DateFormatter = new DateFormatter();  
+			private var dateVar:Date;  
+			
+			private function init():void {  
+				//格式化系统时间  
+				dateFormat.formatString = "HH:NN:SS";    
+				//初始化时的最小时间值  
+				minDate = new Date();  
+				//Alert.show("minDate"+dateFormat.format(minDate));  
+				var dx:Date = new Date();  
+				//初始化时的最大时间值  
+				dx.setMinutes(dx.getMinutes()+1, dx.getSeconds(), dx.getMilliseconds());  
+				maxDate = dx;  
+				//Alert.show("maxDate"+dateFormat.format(maxDate));  
+				//定时之前的系统时间  
+				dateVar = new Date();  
+				//Alert.show("dateVar"+dateFormat.format(dateVar));  
+				//初始化数据  
+				testDatas = new ArrayCollection([{date: dateVar, valueTest: "0.00" ,value2: "50.00" ,vaule3: "70.00"} ]);  
+				
+				timer =  new Timer(1000);  
+				timer.addEventListener(TimerEvent.TIMER, getDatas);  
+				timer.start();  
+				
+			}  
+			
+			//格式化横坐标上的显示值  
+			private function formatLabelX(labelValue:Object, previousValue:Object, d:IAxis):String {  
+				var str:String = dateFormat.format(labelValue);  
+				return str;  
+			}  
+			
+			//格式化纵坐标上显示值  
+			private function formatLabelY(labelValue:Object, previousValue:Object, d:IAxis):String{  
+				var str:String = String(Math.ceil(labelValue.toString()));  
+				return str;  
+			}  
+			
+			//启用定时器以后，每隔一秒执行一次  
+			
+			private function getDatas(et:Event):void {  
+				//获得随机数   
+				var valueTestValue:String = (Math.random()*20).toString();  
+				var value2Value:String = (Math.random()*50).toString();  
+				var value3Value:String = (Math.random()*100).toString(); 
+				//获取定时以后的系统时间  
+				
+				var dm:Date = new Date();  
+				dm.setTime(dateVar.getTime());  
+				dm.setSeconds(dm.getSeconds()+1, dm.getMilliseconds());  
+				dateVar = dm;  
+				
+				if (dateVar.getTime()>maxDate.getTime()) {  
+					maxDate = dateVar;  
+					var dx:Date = new Date();  
+					dx.setMinutes(dx.getMinutes()-1, dx.getSeconds(), dx.getMilliseconds());  
+					minDate = dx;  
+				}  
+				testDatas.addItem({date: dateVar, valueTest: valueTestValue , value2:value2Value, value3:value3Value});        
+				
+			}  
+			
+			
+		]]>  
+	</fx:Script>  
+	<s:VGroup width="100%" height="20%" gap="0">
+		<s:Label left="10" top="8" fontWeight="bold" text="图表"/>
+	</s:VGroup>
+	<s:VGroup width="100%" height="70%" gap="0">
+		<mx:LineChart id="mychart" height="100%" width="100%"   
+					  paddingRight="20" paddingLeft="20"                  
+					  showDataTips="true"                   
+					  >  
+			
+			<!-- 设置横坐标的属性-->  
+			<mx:horizontalAxis>  
+				<mx:DateTimeAxis dataUnits="seconds" interval="1" minimum="{minDate}"  title="系统时间" maximum="{maxDate}" labelFunction="formatLabelX"   />   
+			</mx:horizontalAxis>  
+			
+			<!--设置纵坐标的属性-->  
+			<mx:verticalAxis>  
+				<mx:LinearAxis baseAtZero="true" title="Memory(MB)" interval="1" maximum="30" labelFunction="formatLabelY"/>  
+			</mx:verticalAxis>  
+			
+			<!--设置要显示值的属性-->  
+			<mx:series>  
+				<mx:LineSeries yField="valueTest" xField="date" dataProvider="{this.testDatas}"/>  
+				<!--<mx:LineSeries yField="value2" xField="date" displayName="line2" dataProvider="{this.testDatas}"/>  
+				<mx:LineSeries yField="value3" xField="date" displayName="line3" dataProvider="{this.testDatas}"/>  -->
+			</mx:series>  
+		</mx:LineChart>  
+		<mx:Legend dataProvider="{mychart}"  
+				   direction="horizontal" />  
+		<!--<s:Button  label="send1" id="send1" click="send_clickHandler(event)"/>-->  
+	</s:VGroup>
+</s:Application> 

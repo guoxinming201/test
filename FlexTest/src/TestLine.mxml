@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" styleName="opaquePanel">
+	
+	<mx:Script>
+
+		<![CDATA[
+			
+			import mx.charts.series.LineSeries;
+			
+			import mx.collections.ArrayCollection;
+			
+			import mx.controls.Alert;
+			
+			[Bindable] 
+			
+			public var lineChartData:ArrayCollection = new ArrayCollection([            
+				
+				
+				
+				{index:1,Day: "A", a: 1},
+				
+				{index:2,Day: "A", a: 4}, 
+				
+				{index:3,Day: "A", a: 9},
+				
+				{index:4,Day: "A", a: 14}, 
+				
+				{index:5,Day: "A", a: 17}, 
+				
+				
+				
+				{index:6,Day: "B", a: 1},
+				
+				{index:7,Day: "B", a: 4}, 
+				
+				{index:8,Day: "B", a: 9},
+				
+				{index:9,Day: "B", a: 14}, 
+				
+				{index:10,Day: "B", a: 17}, 
+				
+				
+				
+				{index:6,Day: "B", a: 1},
+				
+				{index:7,Day: "B", a: 4}, 
+				
+				{index:8,Day: "B", a: 9},
+				
+				{index:9,Day: "B", a: 14}, 
+				
+				{index:10,Day: "B", a: 17}, 
+				
+				
+				
+				{index:11,Day: "C", a: 1},
+				
+				{index:12,Day: "C", a: 4}, 
+				
+				{index:13,Day: "C", a: 9},
+				
+				{index:14,Day: "C", a: 14}, 
+				
+				{index:15,Day: "C", a: 17}, 
+				
+				{index:11,Day: "C", a: 1},
+				
+				{index:12,Day: "C", a: 4}, 
+				
+				{index:13,Day: "C", a: 9},
+				
+				{index:14,Day: "C", a: 14}, 
+				
+				{index:15,Day: "C", a: 17},  
+				
+				
+				
+				{index:16,Day: "M", a: 1},
+				
+				{index:17,Day: "M", a: 4}, 
+				
+				{index:18,Day: "M", a: 9},
+				
+				{index:19,Day: "M", a: 14}, 
+				
+				{index:20,Day: "M", a: 17}, 
+				
+				
+				
+				{index:16,Day: "M", a: 1},
+				
+				{index:17,Day: "M", a: 4}, 
+				
+				{index:18,Day: "M", a: 9},
+				
+				{index:19,Day: "M", a: 14}, 
+				
+				{index:20,Day: "M", a: 17}, 
+				
+				
+				
+				{index:21,Day: "N", a: 2},
+				
+				{index:22,Day: "N", a: 7},
+				
+				{index:23,Day: "N", a: 11},
+				
+				{index:24,Day: "N", a: 15},
+				
+				{index:25,Day: "N", a: 21},
+				
+				{index:21,Day: "N", a: 2},
+				
+				{index:22,Day: "N", a: 7},
+				
+				{index:23,Day: "N", a: 11},
+				
+				{index:24,Day: "N", a: 15},
+				
+				{index:25,Day: "N", a: 21},
+				
+				
+				
+				{index:26,Day: "P", a: 2},
+				
+				{index:27,Day: "P", a: 7},
+				
+				{index:28,Day: "P", a: 11},
+				
+				{index:29,Day: "P", a: 15},
+				
+				{index:30,Day: "P", a: 21},
+				
+				
+				
+				{index:31,Day: "L", a: 2},
+				
+				{index:32,Day: "L", a: 7},
+				
+				{index:33,Day: "L", a: 11},
+				
+				{index:34,Day: "L", a: 15},
+				
+				{index:35,Day: "L", a: 21},
+				
+				
+				
+				{index:36,Day: "O", a: 3},
+				
+				{index:37,Day: "O", a: 8},
+				
+				{index:38,Day: "O", a: 12},
+				
+				{index:39,Day: "O", a: 19},
+				
+				{index:40,Day: "O", a: 22}
+				
+				
+				
+			]);
+			
+			
+			
+			private function init():void
+				
+			{
+				
+				
+				var colorPick:Array=[0XFF1200,0X33DE17,0XD8DE29,0X26F1D2,0X4C73F4,0X904DF3,0XF69E06,0XdEA9A0,0XEC388D,0XF40A30,0XFA969B,0X8b0B0B,0X261E65,0XA89DF9,0X4F7626,0XF6BE46,0Xfa022b,0X1B0943,0Xb09BE0,0X9B98A2];
+				
+				
+				
+				var col_index:uint = 0;
+				
+				var tempObj:Object = new Object();
+				
+				var seriesArray:Array = [];
+				
+				var color:uint=0;
+				
+				// var wipe:WipeRight=new WipeRight();
+				
+				// wipe.duration=3500;
+				
+				for each(var item_1:Object in lineChartData)
+				
+				{
+					
+					//Alert.show("item_1:"+item_1);
+					
+					var key_1:String = item_1["Day"];
+					
+					item_1[key_1] = item_1["a"];
+					
+					if(tempObj[key_1] == null)
+						
+					{
+						
+						col_index++;
+						
+						var lineSeries_1:LineSeries = new LineSeries();
+						
+						lineSeries_1.yField = key_1;
+						
+						lineSeries_1.displayName = "表空间使用率(%)";
+						
+						lineSeries_1.setStyle("lineStroke",new Stroke(colorPick[col_index],1.0,0.75));
+						
+						//lineSeries_1.setStyle("showDataEffect",wipe);
+						
+						seriesArray.push(lineSeries_1);
+						
+					}
+					
+					tempObj[key_1] = item_1["a"];
+					
+				}
+				
+				lineChart.series = seriesArray;
+				
+				lineChart.dataProvider=lineChartData;
+				
+				lineChart.dataTipFunction =lineChart_dataTipFunction_5;
+				
+			}
+			
+			
+			
+			import mx.charts.HitData;
+			
+			private function lineChart_dataTipFunction_4(hd:HitData):String
+				
+			{ 
+				
+				var date:Date =  new Date();
+				
+				var result:String = "";
+				
+				var curObj:Object = hd.item;
+				
+				var curSeries:LineSeries = LineSeries(hd.chartItem.element);
+				
+				//return "时间:"+date.fullYear +"年"+ (date.month + 1)+"月"+ date.date+"日" +"" +curObj.hours+"时"+"\n"+"数据:"+curObj.space_percent+"%";
+				
+				if(curObj.space_percent=="")
+					
+				{
+					
+					result = "0";
+					
+				}
+					
+				else
+					
+				{
+					
+					result =curObj.space_percent;
+					
+				}
+				
+				return "时间:"+curObj.hours+"\n"+curObj.space_Name+"的表空间使用率:"+result+"%";
+				
+			}
+			
+			
+			
+			private function lineChart_dataTipFunction_5(hd:HitData):String
+				
+			{ 
+				
+				var date:Date =  new Date();
+				
+				var result:String = "";
+				
+				var curObj:Object = hd.item;
+				
+				var curSeries:LineSeries = LineSeries(hd.chartItem.element);
+				
+				return curObj.Day+"的表空间使用率:"+curObj.a+"%";
+				
+			}
+			
+		]]>
+		
+	</mx:Script>
+	
+	<mx:Stroke />
+	
+	<mx:LineChart  creationComplete="init()" id="lineChart" showDataTips="true" width="724" height="324" x="311" y="151"> 
+		
+		<mx:verticalAxis> 
+			
+			<mx:LinearAxis id="linearAxis" baseAtZero="false" title="Price (USD)"/> 
+			
+		</mx:verticalAxis> 
+		
+		<mx:horizontalAxis> 
+			
+			<mx:CategoryAxis id="ca" categoryField="Days"/> 
+			
+		</mx:horizontalAxis> 
+		
+		<mx:horizontalAxisRenderers> 
+			
+			<mx:AxisRenderer axis="{ca}" canDropLabels="true" /> 
+			
+		</mx:horizontalAxisRenderers> 
+		
+	</mx:LineChart> 
+	
+	<mx:Legend dataProvider="{lineChart}" width="89" height="23" x="10" y="10"/>
+	
+</mx:Application>

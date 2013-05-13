@@ -1,0 +1,43 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"  
+				layout="horizontal" backgroundColor="0xFFFFFF" creationComplete="init();">  
+	
+	<mx:Script>   
+		<![CDATA[   
+			[Bindable] 
+			public var chartDP:Array = [   
+				{"free":9,"total":29,"current":15,"time":"05:46:51","max":63},
+					{"free":9,"total":29,"current":16,"time":"05:46:51","max":63},
+					{"free":9,"total":29,"current":10,"time":"05:46:51","max":63},
+					{"free":9,"total":29,"current":9,"time":"05:46:51","max":63},
+					{"free":9,"total":29,"current":8,"time":"05:46:51","max":63}   
+			];   
+			
+			
+		]]>   
+	</mx:Script>   
+	<mx:Style>   
+		.customTicks {   
+			tickPlacement:cross;   
+			minorTickPlacement:cross;   
+			tickLength:5;   
+			minorTickLength:10;   
+		}   
+	</mx:Style>   
+	<mx:Canvas label="Area">   
+		<mx:LineChart dataProvider="{chartDP}" >   
+			<mx:horizontalAxis>   
+				<mx:CategoryAxis dataProvider="{chartDP}" categoryField="time" />   
+			</mx:horizontalAxis>   
+			<mx:verticalAxis>   
+				<mx:LinearAxis id="vertAxis"/>   
+			</mx:verticalAxis>   
+			<mx:verticalAxisRenderers>   
+				<mx:AxisRenderer axis="{vertAxis}" styleName="customTicks" />   
+			</mx:verticalAxisRenderers>   
+			<mx:series>   
+				<mx:LineSeries yField="current" displayName="current" />   
+			</mx:series>   
+		</mx:LineChart>   
+	</mx:Canvas>   
+	
+</mx:Application>  

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the DateTimeAxis class. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="init()" width="400" height="196" layout="absolute" verticalAlign="middle">
+	<mx:HTTPService id="test" resultFormat="text" url="../getmemory.do"/>
+	
+	<mx:Panel title="主机一系统内存使用记录" height="175" width="100%" paddingTop="0" layout="horizontal" horizontalAlign="center" y="10" x="0">
+		<mx:LineChart id="mychart" height="100%" width="100%"  
+					  showDataTips="true" seriesFilters="[]">
+			<!--seriesFilters="[]"用来去掉折线的阴影-->
+			<mx:horizontalAxis>
+				<mx:DateTimeAxis dataUnits="seconds" interval="5" minimum="{minDate}" maximum="{maxDate}" labelFunction="mylabel" />  
+			</mx:horizontalAxis>
+			
+			<mx:verticalAxis>
+				<mx:LinearAxis baseAtZero="true" />
+			</mx:verticalAxis>
+			
+			<mx:series>
+				<mx:LineSeries yField="current" xField="time" displayName="TestData" dataProvider="{this.testDatas}" >
+					<mx:lineStroke>
+						<!--设置折线的颜色和字体粗细-->
+						<mx:Stroke color="#0000FF" weight="1" />
+					</mx:lineStroke>
+				</mx:LineSeries>
+			</mx:series>
+		</mx:LineChart>
+	</mx:Panel>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.charts.chartClasses.AxisLabelSet;
+			import mx.formatters.DateFormatter;
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			
+			[Bindable]  
+			public var testDatas:ArrayCollection;
+			
+			
+			[Bindable]
+			private var maxDate:Date;
+			[Bindable]
+			private var minDate:Date;
+			
+			private var timer:Timer;
+			private var dateFormat:DateFormatter = new DateFormatter();
+			private var dateVar:Date;
+			
+			private function init():void {
+				dateFormat.formatString = "HH:NN:SS";   
+				minDate = new Date();
+				var dx:Date = new Date();
+				dx.setMinutes(dx.getMinutes()+1, dx.getSeconds(), dx.getMilliseconds());
+				maxDate = dx;
+				<!--监控启动初始值-->
+					dateVar = new Date();
+				testDatas = new ArrayCollection([{time: dateVar, current: 0} ]);
+				<!--设置出发器，每秒更新一次-->
+					timer = new Timer(1000);
+				timer.addEventListener(TimerEvent.TIMER, getDatas)
+				timer.start();
+				
+			}
+			
+			private function mylabel(labelValue:Object, previousValue:Object, d:IAxis):String {
+				var str:String = dateFormat.format(labelValue);
+				return str;
+			}
+			
+			private function getDatas(et:Event):void {
+				var valueTestValue:int = Math.random()*100;
+				var dm:Date = new Date();
+				dm.setTime(dateVar.getTime());
+				dm.setSeconds(dm.getSeconds()+1, dm.getMilliseconds());
+				dateVar = dm;
+				
+				if (dateVar.getTime()>maxDate.getTime()) {
+					maxDate = dateVar;
+					var dx:Date = new Date();
+					dx.setMinutes(dx.getMinutes()-1, dx.getSeconds(), dx.getMilliseconds());
+					minDate = dx;
+				}
+				<!--获取折线图数据来源-->
+					testDatas.addItem({time: dateVar, current: valueTestValue});   
+				
+			}
+			
+		]]>
+	</mx:Script>
+</mx:Application>  
